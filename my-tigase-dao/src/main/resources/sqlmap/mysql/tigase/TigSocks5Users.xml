@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigSocks5UsersDaoImpl">
+    <resultMap id="TigSocks5UsersMap" type="TigSocks5Users">
+		<result column="uid" property="uid" jdbcType="DECIMAL" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="sha1_user_id" property="sha1UserId" jdbcType="VARCHAR" />
+		<result column="domain" property="domain" jdbcType="VARCHAR" />
+		<result column="sha1_domain" property="sha1Domain" jdbcType="VARCHAR" />
+		<result column="filesize_limit" property="filesizeLimit" jdbcType="DECIMAL" />
+		<result column="transfer_limit_per_user" property="transferLimitPerUser" jdbcType="DECIMAL" />
+		<result column="transfer_limit_per_domain" property="transferLimitPerDomain" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <sql id="tigSocks5UsersColumns">
+    	uid,user_id,sha1_user_id,domain,sha1_domain,filesize_limit,transfer_limit_per_user,transfer_limit_per_domain
+    </sql>
+    
+     <sql id="tigSocks5UsersUsedColumns">
+    	user_id,sha1_user_id,domain,sha1_domain,filesize_limit,transfer_limit_per_user,transfer_limit_per_domain
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigSocks5Users" useGeneratedKeys="true" keyProperty="uid">
+        INSERT INTO tig_socks5_users(<include refid="tigSocks5UsersUsedColumns"/>) 
+        VALUES (#{userId},#{sha1UserId},#{domain},#{sha1Domain},#{filesizeLimit},#{transferLimitPerUser},#{transferLimitPerDomain})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigSocks5Users">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_socks5_users set
+		        <if test="uid != null and uid != ''">
+                	uid = #{uid,jdbcType=DECIMAL},
+		        </if>
+		        <if test="userId != null and userId != ''">
+                	user_id = #{userId,jdbcType=VARCHAR},
+		        </if>
+		        <if test="sha1UserId != null and sha1UserId != ''">
+                	sha1_user_id = #{sha1UserId,jdbcType=VARCHAR},
+		        </if>
+		        <if test="domain != null and domain != ''">
+                	domain = #{domain,jdbcType=VARCHAR},
+		        </if>
+		        <if test="sha1Domain != null and sha1Domain != ''">
+                	sha1_domain = #{sha1Domain,jdbcType=VARCHAR},
+		        </if>
+		        <if test="filesizeLimit != null and filesizeLimit != ''">
+                	filesize_limit = #{filesizeLimit,jdbcType=DECIMAL},
+		        </if>
+		        <if test="transferLimitPerUser != null and transferLimitPerUser != ''">
+                	transfer_limit_per_user = #{transferLimitPerUser,jdbcType=DECIMAL},
+		        </if>
+		        <if test="transferLimitPerDomain != null and transferLimitPerDomain != ''">
+                	transfer_limit_per_domain = #{transferLimitPerDomain,jdbcType=DECIMAL},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigSocks5UsersById" resultMap="TigSocks5UsersMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigSocks5UsersColumns"/> from tig_socks5_users
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigSocks5UsersList" resultMap="TigSocks5UsersMap"
+            parameterType="com.letv.tigase.domain.query.TigSocks5UsersQuery">
+        select <include refid="tigSocks5UsersColumns"/> from tig_socks5_users where <include refid="queryTigSocks5UsersListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigSocks5UsersListWithPage" resultMap="TigSocks5UsersMap"
+            parameterType="com.letv.tigase.domain.query.TigSocks5UsersQuery">
+        select <include refid="tigSocks5UsersColumns"/> from tig_socks5_users where <include refid="queryTigSocks5UsersListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigSocks5Users">
+        select count(1) from tig_socks5_users where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigSocks5UsersCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigSocks5UsersQuery">
+        select count(1) from tig_socks5_users where <include refid="queryTigSocks5UsersListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigSocks5Users">
+		update tig_socks5_users 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigSocks5UsersListWhere">
+    	yn = 1
+        <if test="uid != null and uid != ''">
+        	and uid = #{uid,jdbcType=DECIMAL}
+        </if>
+        <if test="userId != null and userId != ''">
+        	and user_id = #{userId,jdbcType=VARCHAR}
+        </if>
+        <if test="sha1UserId != null and sha1UserId != ''">
+        	and sha1_user_id = #{sha1UserId,jdbcType=VARCHAR}
+        </if>
+        <if test="domain != null and domain != ''">
+        	and domain = #{domain,jdbcType=VARCHAR}
+        </if>
+        <if test="sha1Domain != null and sha1Domain != ''">
+        	and sha1_domain = #{sha1Domain,jdbcType=VARCHAR}
+        </if>
+        <if test="filesizeLimit != null and filesizeLimit != ''">
+        	and filesize_limit = #{filesizeLimit,jdbcType=DECIMAL}
+        </if>
+        <if test="transferLimitPerUser != null and transferLimitPerUser != ''">
+        	and transfer_limit_per_user = #{transferLimitPerUser,jdbcType=DECIMAL}
+        </if>
+        <if test="transferLimitPerDomain != null and transferLimitPerDomain != ''">
+        	and transfer_limit_per_domain = #{transferLimitPerDomain,jdbcType=DECIMAL}
+        </if>
+    </sql>
+</mapper>

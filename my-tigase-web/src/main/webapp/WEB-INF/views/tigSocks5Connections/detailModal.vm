@@ -1,0 +1,69 @@
+<!-- Modal -->
+<div class="modal fade" id="myTigSocks5ConnectionsModal" tabindex="-1" role="dialog" aria-labelledby="myTigSocks5ConnectionsModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myTigSocks5ConnectionsModalLabel">详情</h4>
+			</div>
+			<div class="modal-body"> 
+				<table class="table table-striped table-bordered table-condensed table-hover">
+					<tbody>
+						<tr>
+							<th class="center" style='width:25%;'></th><td id="r_connId" style='width:25%;'></td>
+						</tr>
+						<tr>
+							<th class="center" style='width:25%;'></th><td id="r_uid" style='width:25%;'></td>
+						</tr>
+						<tr>
+							<th class="center" style='width:25%;'></th><td id="r_instance" style='width:25%;'></td>
+						</tr>
+						<tr>
+							<th class="center" style='width:25%;'></th><td id="r_direction" style='width:25%;'></td>
+						</tr>
+						<tr>
+							<th class="center" style='width:25%;'></th><td id="r_transferredBytes" style='width:25%;'></td>
+						</tr>
+						<tr>
+							<th class="center" style='width:25%;'></th><td id="r_transferTimestamp" style='width:25%;'></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script language="javascript">         	
+    function toDetail(parameterId){
+		$("#tab_online_tbody").html("");
+		$("#tab_config_tbody").html("");
+		$("#tab_log_tbody").html("");
+    	jQuery.ajax({
+    		type: "GET",
+    		url: basePath + "/tigSocks5Connections/detail",
+    		dataType : 'json',
+    		data: "id=" + parameterId,
+    		
+    		success: function(data){
+    			if(data!=null && data.code==200 && data.result!=null){
+    				var r = data.result;
+    				$("#r_connId").text(r.connId==null?"":r.connId);
+    				$("#r_uid").text(r.uid==null?"":r.uid);
+    				$("#r_instance").text(r.instance==null?"":r.instance);
+    				$("#r_direction").text(r.direction==null?"":r.direction);
+    				$("#r_transferredBytes").text(r.transferredBytes==null?"":r.transferredBytes);
+    				$("#r_transferTimestamp").text(r.transferTimestamp==null?"":r.transferTimestamp);
+    			} else {
+    				alert("获取详情失败");
+    			}
+    		},
+    		
+    		error : function(data) {
+    			alert("获取详情出现异常");
+    		}
+    	});
+		
+    	$('#myTigSocks5ConnectionsModal').modal('show');
+    }
+</script>

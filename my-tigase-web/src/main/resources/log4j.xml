@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} [%7r] %-5p %c %M:%L - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="FILE-DEBUG" class="org.apache.log4j.DailyRollingFileAppender">
+    	<param name="DatePattern" value="'.'yyyyMMdd" />
+        <param name="Append" value="true"/>
+        <param name="Threshold" value="DEBUG"/>
+        <param name="Encoding" value="UTF-8"/>
+        <param name="file" value="${log.logs.path}/${domain.web}/${domain.web}-debug.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} [%7r] %-5p %c %M:%L - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+        <param name="Append" value="true"/>
+        <param name="file" value="${log.logs.path}/${domain.web}/${domain.web}.log"/>
+        <param name="Threshold" value="INFO"/>
+    	<param name="MaxFileSize" value="${log.maxfilesize}"/>
+        <param name="MaxBackupIndex" value="100"/>
+        <param name="Encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} [%7r] %-5p %c %M:%L - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="INFO"/>
+            <!--<param name="LevelMax" value="FATAL "/>-->
+        </filter>
+    </appender>
+
+    <appender name="FILE-AOP" class="org.apache.log4j.RollingFileAppender">
+        <param name="Append" value="true"/>
+        <param name="Threshold" value="INFO"/>
+    	<param name="MaxFileSize" value="${log.maxfilesize}"/>
+        <param name="MaxBackupIndex" value="100"/>
+        <param name="Encoding" value="UTF-8"/>
+        <param name="file" value="${log.logs.path}/${domain.web}/${domain.web}-aop.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} [%7r] %-5p %c %M:%L - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="INFO"/>
+            <!--<param name="LevelMax" value="FATAL "/>-->
+        </filter>
+    </appender>
+
+    <appender name="FILE-SQL" class="org.apache.log4j.RollingFileAppender">
+        <param name="Append" value="true"/>
+        <param name="Threshold" value="DEBUG"/>
+    	<param name="MaxFileSize" value="${log.maxfilesize}"/>
+        <param name="MaxBackupIndex" value="100"/>
+        <param name="Encoding" value="UTF-8"/>
+        <param name="file" value="${log.logs.path}/${domain.web}/${domain.web}-sql.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} [%7r] %-5p %c %M:%L - %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="CoalescingStatistics"
+              class="org.perf4j.log4j.AsyncCoalescingStatisticsAppender">
+        <param name="TimeSlice" value="1800000"/>
+        <appender-ref ref="fileAppender"/>
+    </appender>
+	
+	<appender name="fileAppender" class="org.apache.log4j.FileAppender">
+        <param name="File" value="${log.logs.path}/${domain.web}/perfStats.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%m%n" />
+        </layout>
+    </appender>
+    
+    <category name="org.perf4j.TimingLogger">
+		<priority value="INFO" />
+		<appender-ref ref="CoalescingStatistics" />
+	</category>
+	
+    <!-- mybatis debug -->
+	<category name="org.apache.ibatis" additivity="true">
+		<priority value="DEBUG" />
+		<appender-ref ref="CONSOLE" />
+	</category>
+	
+	<category name="java.sql" additivity="true">
+		<priority value="DEBUG" />
+        <appender-ref ref="FILE-SQL"/>
+		<appender-ref ref="CONSOLE" />
+	</category>
+
+    <category name="foo.aop" additivity="false">
+        <priority value="DEBUG"/>
+        <appender-ref ref="FILE-AOP"/>
+        <appender-ref ref="FILE"/>
+    </category>
+
+    <category name="foo" additivity="true">
+        <priority value="INFO"/>
+        <appender-ref ref="FILE"/>
+    </category>
+
+    <root>
+        <priority value="${log.root.level}"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE-DEBUG"/>
+    </root>
+</log4j:configuration>

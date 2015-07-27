@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigMaMsgsDaoImpl">
+    <resultMap id="TigMaMsgsMap" type="TigMaMsgs">
+		<result column="msg_id" property="msgId" jdbcType="DECIMAL" />
+		<result column="owner_id" property="ownerId" jdbcType="DECIMAL" />
+		<result column="buddy_id" property="buddyId" jdbcType="DECIMAL" />
+		<result column="ts" property="ts" jdbcType="TIMESTAMP" />
+		<result column="direction" property="direction" jdbcType="DECIMAL" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="body" property="body" jdbcType="VARCHAR" />
+		<result column="msg" property="msg" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="tigMaMsgsColumns">
+    	msg_id,owner_id,buddy_id,ts,direction,type,body,msg
+    </sql>
+    
+     <sql id="tigMaMsgsUsedColumns">
+    	owner_id,buddy_id,ts,direction,type,body,msg
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigMaMsgs" useGeneratedKeys="true" keyProperty="msg_id">
+        INSERT INTO tig_ma_msgs(<include refid="tigMaMsgsUsedColumns"/>) 
+        VALUES (#{ownerId},#{buddyId},#{ts},#{direction},#{type},#{body},#{msg})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigMaMsgs">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_ma_msgs set
+		        <if test="msgId != null and msgId != ''">
+                	msg_id = #{msgId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="ownerId != null and ownerId != ''">
+                	owner_id = #{ownerId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="buddyId != null and buddyId != ''">
+                	buddy_id = #{buddyId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="ts != null and ts != ''">
+                	ts = #{ts,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="direction != null and direction != ''">
+                	direction = #{direction,jdbcType=DECIMAL},
+		        </if>
+		        <if test="type != null and type != ''">
+                	type = #{type,jdbcType=VARCHAR},
+		        </if>
+		        <if test="body != null and body != ''">
+                	body = #{body,jdbcType=VARCHAR},
+		        </if>
+		        <if test="msg != null and msg != ''">
+                	msg = #{msg,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigMaMsgsById" resultMap="TigMaMsgsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigMaMsgsColumns"/> from tig_ma_msgs
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigMaMsgsList" resultMap="TigMaMsgsMap"
+            parameterType="com.letv.tigase.domain.query.TigMaMsgsQuery">
+        select <include refid="tigMaMsgsColumns"/> from tig_ma_msgs where <include refid="queryTigMaMsgsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigMaMsgsListWithPage" resultMap="TigMaMsgsMap"
+            parameterType="com.letv.tigase.domain.query.TigMaMsgsQuery">
+        select <include refid="tigMaMsgsColumns"/> from tig_ma_msgs where <include refid="queryTigMaMsgsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigMaMsgs">
+        select count(1) from tig_ma_msgs where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigMaMsgsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigMaMsgsQuery">
+        select count(1) from tig_ma_msgs where <include refid="queryTigMaMsgsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigMaMsgs">
+		update tig_ma_msgs 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigMaMsgsListWhere">
+    	yn = 1
+        <if test="msgId != null and msgId != ''">
+        	and msg_id = #{msgId,jdbcType=DECIMAL}
+        </if>
+        <if test="ownerId != null and ownerId != ''">
+        	and owner_id = #{ownerId,jdbcType=DECIMAL}
+        </if>
+        <if test="buddyId != null and buddyId != ''">
+        	and buddy_id = #{buddyId,jdbcType=DECIMAL}
+        </if>
+        <if test="ts != null and ts != ''">
+        	and ts = #{ts,jdbcType=TIMESTAMP}
+        </if>
+        <if test="direction != null and direction != ''">
+        	and direction = #{direction,jdbcType=DECIMAL}
+        </if>
+        <if test="type != null and type != ''">
+        	and type = #{type,jdbcType=VARCHAR}
+        </if>
+        <if test="body != null and body != ''">
+        	and body = #{body,jdbcType=VARCHAR}
+        </if>
+        <if test="msg != null and msg != ''">
+        	and msg = #{msg,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

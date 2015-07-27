@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+		#parse("/layout/head.vm")
+        <script language="javascript">
+            $(function() {
+				$('#addForm').validate({
+					errorElement:"em",
+					errorClass:"red",
+					rules: {
+												connId: {required: true},
+						uid: {required: true},
+						instance: {required: true},
+						direction: {required: true},
+						transferredBytes: {required: true},
+						transferTimestamp: {required: true}
+					},
+			
+					messages: {
+						connId: { required: "请输入"},
+						uid: { required: "请输入"},
+						instance: { required: "请输入"},
+						direction: { required: "请输入"},
+						transferredBytes: { required: "请输入"},
+						transferTimestamp: { required: "请输入"}
+					}
+				});
+				
+				$("#btn-back").click(function(){
+					window.location.href=("$basePath/tigSocks5Connections");
+				});
+				$("#btn-submit").click(function(){
+            		var form = $("#addForm");
+					if(form.valid()==false){
+						return;
+					}
+					jQuery.post('$basePath/tigSocks5Connections/add',
+            			form.serialize(),
+            			function(data) { MyPopWindow.SubmitCompletedCallback2(data, "$basePath/tigSocks5Connections"); }
+            		);
+            	});
+            });
+        </script>
+    </head>
+	<body>
+		<div class="row">
+            <div class="col-xs-12 col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-header">
+                        <h5 class="lighter">
+                            <i class="icon-plus green"></i>&nbsp;&gt;&nbsp;新增
+                        </h5>
+                        <div class="widget-toolbar"></div>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main" style="background-color: #fff;padding:5px;">
+                            <form class="form-horizontal" role="form" id="addForm">
+                                <div class="form-group">
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="connId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="connId" id="connId" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="uid"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="uid" id="uid" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="instance"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="instance" id="instance" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="direction"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="direction" id="direction" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="transferredBytes"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="transferredBytes" id="transferredBytes" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="transferTimestamp"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="transferTimestamp" id="transferTimestamp" class="col-xs-12 col-sm-12" />
+                                    </div>
+                                </div>
+								<div class="form-group">
+									<div class="col-sm-8 col-sm-offset-4">
+                                        <button class="btn btn-info btn-sm" type="button" id="btn-back"><i class="icon-arrow-left"></i>返回</button>
+                                        &nbsp; &nbsp; &nbsp;
+                                        <button class="btn btn-sm" type="reset" id="btn-reset"><i class="icon-undo"></i>重置</button>
+										 &nbsp; &nbsp; &nbsp;
+              							<button class="btn btn-success btn-sm" type="button" id="btn-submit"><i class="icon-ok"></i>提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+	</body>
+</html>

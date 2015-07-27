@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+		#parse("/layout/head.vm")
+        <script language="javascript">
+            $(function() {
+				$('#updateForm').validate({
+					errorElement:"em",
+					errorClass:"red",
+					rules: {
+												uid: {required: true},
+						userId: {required: true},
+						sha1UserId: {required: true},
+						userPw: {required: true},
+						accCreateTime: {required: true},
+						lastLogin: {required: true},
+						lastLogout: {required: true},
+						onlineStatus: {required: true},
+						failedLogins: {required: true},
+						accountStatus: {required: true}
+					},
+			
+					messages: {
+						uid: { required: "请输入"},
+						userId: { required: "请输入"},
+						sha1UserId: { required: "请输入"},
+						userPw: { required: "请输入"},
+						accCreateTime: { required: "请输入"},
+						lastLogin: { required: "请输入"},
+						lastLogout: { required: "请输入"},
+						onlineStatus: { required: "请输入"},
+						failedLogins: { required: "请输入"},
+						accountStatus: { required: "请输入"}
+					}
+				});
+				
+				$("#btn-back").click(function(){
+					window.location.href=("$basePath/tigUsers");
+				});
+				$("#btn-submit").click(function(){
+            		var form = $("#updateForm");
+					if(form.valid()==false){
+						return;
+					}
+					jQuery.post('$basePath/tigUsers/update',
+            			form.serialize(),
+            			function(data) { MyPopWindow.SubmitCompletedCallback2(data, "$basePath/tigUsers"); }
+            		);
+            	});
+            });
+        </script>
+    </head>
+	<body>
+		<div class="row">
+            <div class="col-xs-12 col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-header">
+                        <h5 class="lighter">
+                            <i class="icon-plus green"></i>&nbsp;&gt;&nbsp;修改
+                        </h5>
+                        <div class="widget-toolbar"></div>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main" style="background-color: #fff;padding:5px;">
+                            <form class="form-horizontal" role="form" id="updateForm">
+                                <div class="form-group">
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="uid"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="uid" id="uid" class="col-xs-12 col-sm-12" value="$!tigUsers.uid" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="userId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="userId" id="userId" class="col-xs-12 col-sm-12" value="$!tigUsers.userId" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="sha1UserId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="sha1UserId" id="sha1UserId" class="col-xs-12 col-sm-12" value="$!tigUsers.sha1UserId" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="userPw"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="userPw" id="userPw" class="col-xs-12 col-sm-12" value="$!tigUsers.userPw" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="accCreateTime"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="accCreateTime" id="accCreateTime" class="col-xs-12 col-sm-12" value="$!tigUsers.accCreateTime" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="lastLogin"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="lastLogin" id="lastLogin" class="col-xs-12 col-sm-12" value="$!tigUsers.lastLogin" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="lastLogout"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="lastLogout" id="lastLogout" class="col-xs-12 col-sm-12" value="$!tigUsers.lastLogout" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="onlineStatus"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="onlineStatus" id="onlineStatus" class="col-xs-12 col-sm-12" value="$!tigUsers.onlineStatus" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="failedLogins"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="failedLogins" id="failedLogins" class="col-xs-12 col-sm-12" value="$!tigUsers.failedLogins" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="accountStatus"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="accountStatus" id="accountStatus" class="col-xs-12 col-sm-12" value="$!tigUsers.accountStatus" />
+                                    </div>
+                                </div>
+								<div class="form-group">
+									<input type="hidden" name="id" id="id" value="$!tigUsers.id" />
+									<div class="col-sm-8 col-sm-offset-4">
+                                        <button class="btn btn-info btn-sm" type="button" id="btn-back"><i class="icon-arrow-left"></i>返回</button>
+                                        &nbsp; &nbsp; &nbsp;
+                                        <button class="btn btn-sm" type="reset" id="btn-reset"><i class="icon-undo"></i>重置</button>
+										 &nbsp; &nbsp; &nbsp;
+              							<button class="btn btn-success btn-sm" type="button" id="btn-submit"><i class="icon-ok"></i>提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+	</body>
+</html>

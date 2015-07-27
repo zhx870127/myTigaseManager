@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+		#parse("/layout/head.vm")
+        <script language="javascript">
+            $(function() {
+				$('#addForm').validate({
+					errorElement:"em",
+					errorClass:"red",
+					rules: {
+												uid: {required: true},
+						userId: {required: true},
+						sha1UserId: {required: true},
+						domain: {required: true},
+						sha1Domain: {required: true},
+						filesizeLimit: {required: true},
+						transferLimitPerUser: {required: true},
+						transferLimitPerDomain: {required: true}
+					},
+			
+					messages: {
+						uid: { required: "请输入"},
+						userId: { required: "请输入"},
+						sha1UserId: { required: "请输入"},
+						domain: { required: "请输入"},
+						sha1Domain: { required: "请输入"},
+						filesizeLimit: { required: "请输入"},
+						transferLimitPerUser: { required: "请输入"},
+						transferLimitPerDomain: { required: "请输入"}
+					}
+				});
+				
+				$("#btn-back").click(function(){
+					window.location.href=("$basePath/tigSocks5Users");
+				});
+				$("#btn-submit").click(function(){
+            		var form = $("#addForm");
+					if(form.valid()==false){
+						return;
+					}
+					jQuery.post('$basePath/tigSocks5Users/add',
+            			form.serialize(),
+            			function(data) { MyPopWindow.SubmitCompletedCallback2(data, "$basePath/tigSocks5Users"); }
+            		);
+            	});
+            });
+        </script>
+    </head>
+	<body>
+		<div class="row">
+            <div class="col-xs-12 col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-header">
+                        <h5 class="lighter">
+                            <i class="icon-plus green"></i>&nbsp;&gt;&nbsp;新增
+                        </h5>
+                        <div class="widget-toolbar"></div>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main" style="background-color: #fff;padding:5px;">
+                            <form class="form-horizontal" role="form" id="addForm">
+                                <div class="form-group">
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="uid"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="uid" id="uid" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="userId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="userId" id="userId" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="sha1UserId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="sha1UserId" id="sha1UserId" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="domain"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="domain" id="domain" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="sha1Domain"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="sha1Domain" id="sha1Domain" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="filesizeLimit"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="filesizeLimit" id="filesizeLimit" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="transferLimitPerUser"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="transferLimitPerUser" id="transferLimitPerUser" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="transferLimitPerDomain"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="transferLimitPerDomain" id="transferLimitPerDomain" class="col-xs-12 col-sm-12" />
+                                    </div>
+                                </div>
+								<div class="form-group">
+									<div class="col-sm-8 col-sm-offset-4">
+                                        <button class="btn btn-info btn-sm" type="button" id="btn-back"><i class="icon-arrow-left"></i>返回</button>
+                                        &nbsp; &nbsp; &nbsp;
+                                        <button class="btn btn-sm" type="reset" id="btn-reset"><i class="icon-undo"></i>重置</button>
+										 &nbsp; &nbsp; &nbsp;
+              							<button class="btn btn-success btn-sm" type="button" id="btn-submit"><i class="icon-ok"></i>提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+	</body>
+</html>

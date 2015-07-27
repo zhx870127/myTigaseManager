@@ -1,0 +1,99 @@
+<script type="text/javascript">
+	window.basePath = "#springUrl('')";
+</script>
+#set($basePath=$request.getContextPath())
+<title>乐视电商管理平台</title>
+<meta charset="utf-8" />
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta name="keywords" content="乐视电商管理平台" />
+<meta name="description" content="乐视电商管理平台" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- basic styles -->
+<link rel="stylesheet" href="#springUrl('')/static/css/bootstrap.min.css" />
+<link rel="stylesheet" href="#springUrl('')/static/css/font-awesome.min.css" />
+
+<!--[if IE 7]>
+  <link rel="stylesheet" href="#springUrl('')/static/css/font-awesome-ie7.min.css" />
+<![endif]-->
+
+<!-- page specific plugin styles -->
+<link rel="stylesheet" href="#springUrl('')/static/css/jquery-ui-1.10.3.full.min.css" />
+<link rel="stylesheet" href="#springUrl('')/static/css/datetimepicker.css" />
+<link rel="stylesheet" href="#springUrl('')/static/css/ui.jqgrid.css" />
+
+<!-- ace styles -->
+<link rel="stylesheet" href="#springUrl('')/static/css/ace.min.css" />
+<link rel="stylesheet" href="#springUrl('')/static/css/ace-rtl.min.css" />
+<link rel="stylesheet" href="#springUrl('')/static/css/ace-skins.min.css" />
+
+<!--[if lte IE 8]>
+  <link rel="stylesheet" href="#springUrl('')/static/css/ace-ie.min.css" />
+<![endif]-->
+
+<!-- inline styles related to this page -->
+
+<!-- ace settings handler -->
+
+<script src="#springUrl('')/static/js/ace-extra.min.js"></script>
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+<!--[if lt IE 9]>
+<script src="#springUrl('')/static/js/html5shiv.js"></script>
+<script src="#springUrl('')/static/js/respond.min.js"></script>
+<![endif]-->
+
+<!-- basic scripts -->
+<!--[if !IE]> -->
+  <script type="text/javascript">
+	window.jQuery || document.write("<script src='#springUrl('')/static/js/jquery-2.0.3.min.js'>"+"<"+"script>");
+  </script>
+<!-- <![endif]-->
+
+<!--[if IE]>
+  <script type="text/javascript">
+   window.jQuery || document.write("<script src='#springUrl('')/static/js/jquery-1.10.2.min.js'>"+"<"+"script>");
+  </script>
+<![endif]-->
+
+<script type="text/javascript">
+	if("ontouchend" in document) document.write("<script src='#springUrl('')/static/js/jquery.mobile.custom.min.js'>"+"<"+"script>");
+</script>
+<script src="#springUrl('')/static/js/bootstrap.min.js"></script>
+<script src="#springUrl('')/static/js/typeahead-bs2.min.js"></script>
+
+<!-- page specific plugin scripts -->
+
+<!--[if lte IE 8]>
+  <script src="#springUrl('')/static/js/excanvas.min.js"></script>
+<![endif]-->
+
+<script src="#springUrl('')/static/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="#springUrl('')/static/js/jquery.ui.touch-punch.min.js"></script>
+<script src="#springUrl('')/static/js/jquery.slimscroll.min.js"></script>
+<script src="#springUrl('')/static/js/jquery.easy-pie-chart.min.js"></script>
+<script src="#springUrl('')/static/js/jquery.sparkline.min.js"></script>
+<script src="#springUrl('')/static/js/jquery.validate.min.js"></script>
+<script src="#springUrl('')/static/js/flot/jquery.flot.min.js"></script>
+<script src="#springUrl('')/static/js/flot/jquery.flot.pie.min.js"></script>
+<script src="#springUrl('')/static/js/flot/jquery.flot.resize.min.js"></script>
+<script src="#springUrl('')/static/js/date-time/bootstrap-datetimepicker.min.js"></script>
+<script src="#springUrl('')/static/js/date-time/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="#springUrl('')/static/js/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="#springUrl('')/static/js/jqGrid/jqGrid.ace.js?v=12"></script>
+<script src="#springUrl('')/static/js/jqGrid/i18n/grid.locale-zh_CN.js?v=123"></script>
+<!-- ace scripts -->
+<script src="#springUrl('')/static/js/ace-elements.min.js"></script>
+<script src="#springUrl('')/static/js/ace.min.js"></script>
+<script src="#springUrl('')/static/js/inner/common.js"></script>
+<script src="#springUrl('')/static/js/jquery_dialog/jquery_dialog.js"></script>
+<script src="#springUrl('')/static/js/inner/main.js"></script>
+
+<link rel="Shortcut Icon" href="#springUrl('')/static/images/favicon.ico"/>
+<style type="text/css">
+	body{ background-color: #FFFFFF; }
+	select{ height:32px; line-height:28px; padding:2px 0;}
+	.AutoNewline { word-break: break-all; }
+</style>

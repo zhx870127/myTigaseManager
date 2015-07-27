@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigPubsubAffiliationsDaoImpl">
+    <resultMap id="TigPubsubAffiliationsMap" type="TigPubsubAffiliations">
+		<result column="node_id" property="nodeId" jdbcType="DECIMAL" />
+		<result column="jid_id" property="jidId" jdbcType="DECIMAL" />
+		<result column="affiliation" property="affiliation" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="tigPubsubAffiliationsColumns">
+    	node_id,jid_id,affiliation
+    </sql>
+    
+     <sql id="tigPubsubAffiliationsUsedColumns">
+    	node_id,affiliation
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigPubsubAffiliations" useGeneratedKeys="true" keyProperty="jid_id">
+        INSERT INTO tig_pubsub_affiliations(<include refid="tigPubsubAffiliationsUsedColumns"/>) 
+        VALUES (#{nodeId},#{affiliation})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigPubsubAffiliations">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_pubsub_affiliations set
+		        <if test="nodeId != null and nodeId != ''">
+                	node_id = #{nodeId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="jidId != null and jidId != ''">
+                	jid_id = #{jidId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="affiliation != null and affiliation != ''">
+                	affiliation = #{affiliation,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigPubsubAffiliationsById" resultMap="TigPubsubAffiliationsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigPubsubAffiliationsColumns"/> from tig_pubsub_affiliations
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigPubsubAffiliationsList" resultMap="TigPubsubAffiliationsMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubAffiliationsQuery">
+        select <include refid="tigPubsubAffiliationsColumns"/> from tig_pubsub_affiliations where <include refid="queryTigPubsubAffiliationsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigPubsubAffiliationsListWithPage" resultMap="TigPubsubAffiliationsMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubAffiliationsQuery">
+        select <include refid="tigPubsubAffiliationsColumns"/> from tig_pubsub_affiliations where <include refid="queryTigPubsubAffiliationsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigPubsubAffiliations">
+        select count(1) from tig_pubsub_affiliations where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigPubsubAffiliationsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigPubsubAffiliationsQuery">
+        select count(1) from tig_pubsub_affiliations where <include refid="queryTigPubsubAffiliationsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigPubsubAffiliations">
+		update tig_pubsub_affiliations 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigPubsubAffiliationsListWhere">
+    	yn = 1
+        <if test="nodeId != null and nodeId != ''">
+        	and node_id = #{nodeId,jdbcType=DECIMAL}
+        </if>
+        <if test="jidId != null and jidId != ''">
+        	and jid_id = #{jidId,jdbcType=DECIMAL}
+        </if>
+        <if test="affiliation != null and affiliation != ''">
+        	and affiliation = #{affiliation,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

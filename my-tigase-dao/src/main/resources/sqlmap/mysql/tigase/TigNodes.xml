@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigNodesDaoImpl">
+    <resultMap id="TigNodesMap" type="TigNodes">
+		<result column="nid" property="nid" jdbcType="DECIMAL" />
+		<result column="parent_nid" property="parentNid" jdbcType="DECIMAL" />
+		<result column="uid" property="uid" jdbcType="DECIMAL" />
+		<result column="node" property="node" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="tigNodesColumns">
+    	nid,parent_nid,uid,node
+    </sql>
+    
+     <sql id="tigNodesUsedColumns">
+    	parent_nid,uid,node
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigNodes" useGeneratedKeys="true" keyProperty="nid">
+        INSERT INTO tig_nodes(<include refid="tigNodesUsedColumns"/>) 
+        VALUES (#{parentNid},#{uid},#{node})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigNodes">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_nodes set
+		        <if test="nid != null and nid != ''">
+                	nid = #{nid,jdbcType=DECIMAL},
+		        </if>
+		        <if test="parentNid != null and parentNid != ''">
+                	parent_nid = #{parentNid,jdbcType=DECIMAL},
+		        </if>
+		        <if test="uid != null and uid != ''">
+                	uid = #{uid,jdbcType=DECIMAL},
+		        </if>
+		        <if test="node != null and node != ''">
+                	node = #{node,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigNodesById" resultMap="TigNodesMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigNodesColumns"/> from tig_nodes
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigNodesList" resultMap="TigNodesMap"
+            parameterType="com.letv.tigase.domain.query.TigNodesQuery">
+        select <include refid="tigNodesColumns"/> from tig_nodes where <include refid="queryTigNodesListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigNodesListWithPage" resultMap="TigNodesMap"
+            parameterType="com.letv.tigase.domain.query.TigNodesQuery">
+        select <include refid="tigNodesColumns"/> from tig_nodes where <include refid="queryTigNodesListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigNodes">
+        select count(1) from tig_nodes where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigNodesCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigNodesQuery">
+        select count(1) from tig_nodes where <include refid="queryTigNodesListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigNodes">
+		update tig_nodes 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigNodesListWhere">
+    	yn = 1
+        <if test="nid != null and nid != ''">
+        	and nid = #{nid,jdbcType=DECIMAL}
+        </if>
+        <if test="parentNid != null and parentNid != ''">
+        	and parent_nid = #{parentNid,jdbcType=DECIMAL}
+        </if>
+        <if test="uid != null and uid != ''">
+        	and uid = #{uid,jdbcType=DECIMAL}
+        </if>
+        <if test="node != null and node != ''">
+        	and node = #{node,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

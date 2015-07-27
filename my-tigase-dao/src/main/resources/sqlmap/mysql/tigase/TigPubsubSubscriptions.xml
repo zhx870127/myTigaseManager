@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigPubsubSubscriptionsDaoImpl">
+    <resultMap id="TigPubsubSubscriptionsMap" type="TigPubsubSubscriptions">
+		<result column="node_id" property="nodeId" jdbcType="DECIMAL" />
+		<result column="jid_id" property="jidId" jdbcType="DECIMAL" />
+		<result column="subscription" property="subscription" jdbcType="VARCHAR" />
+		<result column="subscription_id" property="subscriptionId" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="tigPubsubSubscriptionsColumns">
+    	node_id,jid_id,subscription,subscription_id
+    </sql>
+    
+     <sql id="tigPubsubSubscriptionsUsedColumns">
+    	node_id,subscription,subscription_id
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigPubsubSubscriptions" useGeneratedKeys="true" keyProperty="jid_id">
+        INSERT INTO tig_pubsub_subscriptions(<include refid="tigPubsubSubscriptionsUsedColumns"/>) 
+        VALUES (#{nodeId},#{subscription},#{subscriptionId})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigPubsubSubscriptions">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_pubsub_subscriptions set
+		        <if test="nodeId != null and nodeId != ''">
+                	node_id = #{nodeId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="jidId != null and jidId != ''">
+                	jid_id = #{jidId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="subscription != null and subscription != ''">
+                	subscription = #{subscription,jdbcType=VARCHAR},
+		        </if>
+		        <if test="subscriptionId != null and subscriptionId != ''">
+                	subscription_id = #{subscriptionId,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigPubsubSubscriptionsById" resultMap="TigPubsubSubscriptionsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigPubsubSubscriptionsColumns"/> from tig_pubsub_subscriptions
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigPubsubSubscriptionsList" resultMap="TigPubsubSubscriptionsMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubSubscriptionsQuery">
+        select <include refid="tigPubsubSubscriptionsColumns"/> from tig_pubsub_subscriptions where <include refid="queryTigPubsubSubscriptionsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigPubsubSubscriptionsListWithPage" resultMap="TigPubsubSubscriptionsMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubSubscriptionsQuery">
+        select <include refid="tigPubsubSubscriptionsColumns"/> from tig_pubsub_subscriptions where <include refid="queryTigPubsubSubscriptionsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigPubsubSubscriptions">
+        select count(1) from tig_pubsub_subscriptions where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigPubsubSubscriptionsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigPubsubSubscriptionsQuery">
+        select count(1) from tig_pubsub_subscriptions where <include refid="queryTigPubsubSubscriptionsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigPubsubSubscriptions">
+		update tig_pubsub_subscriptions 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigPubsubSubscriptionsListWhere">
+    	yn = 1
+        <if test="nodeId != null and nodeId != ''">
+        	and node_id = #{nodeId,jdbcType=DECIMAL}
+        </if>
+        <if test="jidId != null and jidId != ''">
+        	and jid_id = #{jidId,jdbcType=DECIMAL}
+        </if>
+        <if test="subscription != null and subscription != ''">
+        	and subscription = #{subscription,jdbcType=VARCHAR}
+        </if>
+        <if test="subscriptionId != null and subscriptionId != ''">
+        	and subscription_id = #{subscriptionId,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

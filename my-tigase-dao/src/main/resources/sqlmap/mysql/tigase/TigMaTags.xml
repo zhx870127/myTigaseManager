@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigMaTagsDaoImpl">
+    <resultMap id="TigMaTagsMap" type="TigMaTags">
+		<result column="tag_id" property="tagId" jdbcType="DECIMAL" />
+		<result column="tag" property="tag" jdbcType="VARCHAR" />
+		<result column="owner_id" property="ownerId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <sql id="tigMaTagsColumns">
+    	tag_id,tag,owner_id
+    </sql>
+    
+     <sql id="tigMaTagsUsedColumns">
+    	tag,owner_id
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigMaTags" useGeneratedKeys="true" keyProperty="tag_id">
+        INSERT INTO tig_ma_tags(<include refid="tigMaTagsUsedColumns"/>) 
+        VALUES (#{tag},#{ownerId})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigMaTags">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_ma_tags set
+		        <if test="tagId != null and tagId != ''">
+                	tag_id = #{tagId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="tag != null and tag != ''">
+                	tag = #{tag,jdbcType=VARCHAR},
+		        </if>
+		        <if test="ownerId != null and ownerId != ''">
+                	owner_id = #{ownerId,jdbcType=DECIMAL},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigMaTagsById" resultMap="TigMaTagsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigMaTagsColumns"/> from tig_ma_tags
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigMaTagsList" resultMap="TigMaTagsMap"
+            parameterType="com.letv.tigase.domain.query.TigMaTagsQuery">
+        select <include refid="tigMaTagsColumns"/> from tig_ma_tags where <include refid="queryTigMaTagsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigMaTagsListWithPage" resultMap="TigMaTagsMap"
+            parameterType="com.letv.tigase.domain.query.TigMaTagsQuery">
+        select <include refid="tigMaTagsColumns"/> from tig_ma_tags where <include refid="queryTigMaTagsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigMaTags">
+        select count(1) from tig_ma_tags where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigMaTagsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigMaTagsQuery">
+        select count(1) from tig_ma_tags where <include refid="queryTigMaTagsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigMaTags">
+		update tig_ma_tags 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigMaTagsListWhere">
+    	yn = 1
+        <if test="tagId != null and tagId != ''">
+        	and tag_id = #{tagId,jdbcType=DECIMAL}
+        </if>
+        <if test="tag != null and tag != ''">
+        	and tag = #{tag,jdbcType=VARCHAR}
+        </if>
+        <if test="ownerId != null and ownerId != ''">
+        	and owner_id = #{ownerId,jdbcType=DECIMAL}
+        </if>
+    </sql>
+</mapper>

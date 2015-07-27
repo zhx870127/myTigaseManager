@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigPubsubNodesDaoImpl">
+    <resultMap id="TigPubsubNodesMap" type="TigPubsubNodes">
+		<result column="node_id" property="nodeId" jdbcType="DECIMAL" />
+		<result column="service_id" property="serviceId" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="name_sha1" property="nameSha1" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="DECIMAL" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="creator_id" property="creatorId" jdbcType="DECIMAL" />
+		<result column="creation_date" property="creationDate" jdbcType="TIMESTAMP" />
+		<result column="configuration" property="configuration" jdbcType="VARCHAR" />
+		<result column="collection_id" property="collectionId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <sql id="tigPubsubNodesColumns">
+    	node_id,service_id,name,name_sha1,type,title,description,creator_id,creation_date,configuration,collection_id
+    </sql>
+    
+     <sql id="tigPubsubNodesUsedColumns">
+    	service_id,name,name_sha1,type,title,description,creator_id,creation_date,configuration,collection_id
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigPubsubNodes" useGeneratedKeys="true" keyProperty="node_id">
+        INSERT INTO tig_pubsub_nodes(<include refid="tigPubsubNodesUsedColumns"/>) 
+        VALUES (#{serviceId},#{name},#{nameSha1},#{type},#{title},#{description},#{creatorId},#{creationDate},#{configuration},#{collectionId})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigPubsubNodes">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_pubsub_nodes set
+		        <if test="nodeId != null and nodeId != ''">
+                	node_id = #{nodeId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="serviceId != null and serviceId != ''">
+                	service_id = #{serviceId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="name != null and name != ''">
+                	name = #{name,jdbcType=VARCHAR},
+		        </if>
+		        <if test="nameSha1 != null and nameSha1 != ''">
+                	name_sha1 = #{nameSha1,jdbcType=VARCHAR},
+		        </if>
+		        <if test="type != null and type != ''">
+                	type = #{type,jdbcType=DECIMAL},
+		        </if>
+		        <if test="title != null and title != ''">
+                	title = #{title,jdbcType=VARCHAR},
+		        </if>
+		        <if test="description != null and description != ''">
+                	description = #{description,jdbcType=VARCHAR},
+		        </if>
+		        <if test="creatorId != null and creatorId != ''">
+                	creator_id = #{creatorId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="creationDate != null and creationDate != ''">
+                	creation_date = #{creationDate,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="configuration != null and configuration != ''">
+                	configuration = #{configuration,jdbcType=VARCHAR},
+		        </if>
+		        <if test="collectionId != null and collectionId != ''">
+                	collection_id = #{collectionId,jdbcType=DECIMAL},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigPubsubNodesById" resultMap="TigPubsubNodesMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigPubsubNodesColumns"/> from tig_pubsub_nodes
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigPubsubNodesList" resultMap="TigPubsubNodesMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubNodesQuery">
+        select <include refid="tigPubsubNodesColumns"/> from tig_pubsub_nodes where <include refid="queryTigPubsubNodesListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigPubsubNodesListWithPage" resultMap="TigPubsubNodesMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubNodesQuery">
+        select <include refid="tigPubsubNodesColumns"/> from tig_pubsub_nodes where <include refid="queryTigPubsubNodesListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigPubsubNodes">
+        select count(1) from tig_pubsub_nodes where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigPubsubNodesCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigPubsubNodesQuery">
+        select count(1) from tig_pubsub_nodes where <include refid="queryTigPubsubNodesListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigPubsubNodes">
+		update tig_pubsub_nodes 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigPubsubNodesListWhere">
+    	yn = 1
+        <if test="nodeId != null and nodeId != ''">
+        	and node_id = #{nodeId,jdbcType=DECIMAL}
+        </if>
+        <if test="serviceId != null and serviceId != ''">
+        	and service_id = #{serviceId,jdbcType=DECIMAL}
+        </if>
+        <if test="name != null and name != ''">
+        	and name = #{name,jdbcType=VARCHAR}
+        </if>
+        <if test="nameSha1 != null and nameSha1 != ''">
+        	and name_sha1 = #{nameSha1,jdbcType=VARCHAR}
+        </if>
+        <if test="type != null and type != ''">
+        	and type = #{type,jdbcType=DECIMAL}
+        </if>
+        <if test="title != null and title != ''">
+        	and title = #{title,jdbcType=VARCHAR}
+        </if>
+        <if test="description != null and description != ''">
+        	and description = #{description,jdbcType=VARCHAR}
+        </if>
+        <if test="creatorId != null and creatorId != ''">
+        	and creator_id = #{creatorId,jdbcType=DECIMAL}
+        </if>
+        <if test="creationDate != null and creationDate != ''">
+        	and creation_date = #{creationDate,jdbcType=TIMESTAMP}
+        </if>
+        <if test="configuration != null and configuration != ''">
+        	and configuration = #{configuration,jdbcType=VARCHAR}
+        </if>
+        <if test="collectionId != null and collectionId != ''">
+        	and collection_id = #{collectionId,jdbcType=DECIMAL}
+        </if>
+    </sql>
+</mapper>

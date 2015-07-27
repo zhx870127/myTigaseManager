@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.XmppStanzaDaoImpl">
+    <resultMap id="XmppStanzaMap" type="XmppStanza">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="stanza" property="stanza" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="xmppStanzaColumns">
+    	id,stanza
+    </sql>
+    
+     <sql id="xmppStanzaUsedColumns">
+    	stanza
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="XmppStanza" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO xmpp_stanza(<include refid="xmppStanzaUsedColumns"/>) 
+        VALUES (#{stanza})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="XmppStanza">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update xmpp_stanza set
+		        <if test="stanza != null and stanza != ''">
+                	stanza = #{stanza,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getXmppStanzaById" resultMap="XmppStanzaMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="xmppStanzaColumns"/> from xmpp_stanza
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryXmppStanzaList" resultMap="XmppStanzaMap"
+            parameterType="com.letv.tigase.domain.query.XmppStanzaQuery">
+        select <include refid="xmppStanzaColumns"/> from xmpp_stanza where <include refid="queryXmppStanzaListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryXmppStanzaListWithPage" resultMap="XmppStanzaMap"
+            parameterType="com.letv.tigase.domain.query.XmppStanzaQuery">
+        select <include refid="xmppStanzaColumns"/> from xmpp_stanza where <include refid="queryXmppStanzaListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="XmppStanza">
+        select count(1) from xmpp_stanza where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryXmppStanzaCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.XmppStanzaQuery">
+        select count(1) from xmpp_stanza where <include refid="queryXmppStanzaListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="XmppStanza">
+		update xmpp_stanza 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryXmppStanzaListWhere">
+    	yn = 1
+        <if test="id != null and id != ''">
+        	and id = #{id,jdbcType=DECIMAL}
+        </if>
+        <if test="stanza != null and stanza != ''">
+        	and stanza = #{stanza,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

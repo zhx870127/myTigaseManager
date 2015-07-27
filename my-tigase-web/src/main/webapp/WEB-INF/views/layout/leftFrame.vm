@@ -1,0 +1,153 @@
+<a class="menu-toggler" id="menu-toggler" href="#">
+	<span class="menu-text"></span>
+</a>
+<div class="sidebar" id="sidebar">
+	<script type="text/javascript">
+		/**
+         * 变更主题颜色
+         * User: gaohongjing
+         * Date: 2014-4-22
+         * Time: 下午03:50:59
+         * Version: 1.0
+         */
+		function changeTheme(color){
+			//顶部颜色设定
+			$("#navbar").css("background-color",color);
+			//子菜单划过效果
+			$("#nav-menu>li>ul>li>a").mousemove(function(){
+				$(this).css("background-color",color);
+				$(this).css("border-color","#e9e9e9");
+			});
+			//子菜单划出效果
+			$("#nav-menu>li>ul>li>a").mouseout(function(){
+				$(this).css("background-color","#fff");
+				$(this).css("border-color","#fff");
+			});
+		}
+		
+		function link(c,n,u,pc,pn){
+			document.getElementById("frame-content").src=u;
+        	$("#nav-menu> li > ul >li").each(function(){
+            	$(this).removeClass("active");
+            });
+			
+			$("#nav-menu> li > ul").css("display","none");
+			$("#menu-"+pc+"> ul").css("display","block");
+            
+			var current="#subMenu-"+c;
+			$(current).addClass("active");
+			
+			$("#breadcrumb-first").text(pn);
+			$("#breadcrumb-second").text(n);
+		}
+	</script>
+
+	<div class="sidebar-shortcuts" id="sidebar-shortcuts">
+		<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+			<button onclick="changeTheme('#87B87F')" class="btn btn-success">
+				  &nbsp;
+			</button>
+
+			<button onclick="changeTheme('#438EB9')" class="btn btn-info">
+				&nbsp;
+			</button>
+
+			<button onclick="changeTheme('#FFB752')" class="btn btn-warning">
+				&nbsp;
+			</button>
+
+			<button onclick="changeTheme('#D15B47')" class="btn btn-danger">
+				&nbsp;
+			</button>
+		</div>
+	</div><!-- #sidebar-shortcuts -->
+
+	<ul class="nav nav-list" id="nav-menu">
+		<li>
+			<a href="#springUrl('')/index">
+				<i class="icon-dashboard"></i>
+				<span class="menu-text">平台首页 </span>
+			</a>
+		</li>
+		
+		<li id="menu-20">
+			<a href="javascript:void(0)" class="dropdown-toggle">
+				<i class="icon-desktop"></i>
+				<span class="menu-text">tigase系统</span>
+				<b class="arrow icon-angle-down"></b>
+			</a>
+
+			<ul class="submenu">
+				<li id="subMenu-200">
+					<a href="javascript:void(0)" onclick="link('200','','broadcastMsgs','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-201">
+					<a href="javascript:void(0)" onclick="link('201','','broadcastMsgsRecipients','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-202">
+					<a href="javascript:void(0)" onclick="link('202','','clusterNodes','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-203">
+					<a href="javascript:void(0)" onclick="link('203','','msgHistory','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-204">
+					<a href="javascript:void(0)" onclick="link('204','','shortNews','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-205">
+					<a href="javascript:void(0)" onclick="link('205','','tigMaJids','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-206">
+					<a href="javascript:void(0)" onclick="link('206','','tigMaMsgs','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-207">
+					<a href="javascript:void(0)" onclick="link('207','','tigMaTags','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-208">
+					<a href="javascript:void(0)" onclick="link('208','','tigNodes','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-209">
+					<a href="javascript:void(0)" onclick="link('209','','tigPubsubAffiliations','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2010">
+					<a href="javascript:void(0)" onclick="link('2010','','tigPubsubItems','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2011">
+					<a href="javascript:void(0)" onclick="link('2011','','tigPubsubJids','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2012">
+					<a href="javascript:void(0)" onclick="link('2012','','tigPubsubNodes','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2013">
+					<a href="javascript:void(0)" onclick="link('2013','','tigPubsubServiceJids','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2014">
+					<a href="javascript:void(0)" onclick="link('2014','','tigPubsubSubscriptions','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2015">
+					<a href="javascript:void(0)" onclick="link('2015','','tigSocks5Connections','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2016">
+					<a href="javascript:void(0)" onclick="link('2016','','tigSocks5Users','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2017">
+					<a href="javascript:void(0)" onclick="link('2017','','tigUsers','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2018">
+					<a href="javascript:void(0)" onclick="link('2018','','userJid','20','tigase系统');"></a>
+				</li>
+				<li id="subMenu-2019">
+					<a href="javascript:void(0)" onclick="link('2019','','xmppStanza','20','tigase系统');"></a>
+				</li>
+			</ul>
+		
+		</li>
+	</ul><!-- /.nav-list -->
+
+	<div class="sidebar-collapse" id="sidebar-collapse">
+		<i class="icon-double-angle-left" data-icon1="icon-double-angle-left" data-icon2="icon-double-angle-right"></i>
+	</div>
+
+	<script type="text/javascript">
+		try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
+	</script>
+</div>

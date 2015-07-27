@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigSocks5ConnectionsDaoImpl">
+    <resultMap id="TigSocks5ConnectionsMap" type="TigSocks5Connections">
+		<result column="conn_id" property="connId" jdbcType="DECIMAL" />
+		<result column="uid" property="uid" jdbcType="DECIMAL" />
+		<result column="instance" property="instance" jdbcType="VARCHAR" />
+		<result column="direction" property="direction" jdbcType="DECIMAL" />
+		<result column="transferred_bytes" property="transferredBytes" jdbcType="DECIMAL" />
+		<result column="transfer_timestamp" property="transferTimestamp" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <sql id="tigSocks5ConnectionsColumns">
+    	conn_id,uid,instance,direction,transferred_bytes,transfer_timestamp
+    </sql>
+    
+     <sql id="tigSocks5ConnectionsUsedColumns">
+    	uid,instance,direction,transferred_bytes,transfer_timestamp
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigSocks5Connections" useGeneratedKeys="true" keyProperty="conn_id">
+        INSERT INTO tig_socks5_connections(<include refid="tigSocks5ConnectionsUsedColumns"/>) 
+        VALUES (#{uid},#{instance},#{direction},#{transferredBytes},#{transferTimestamp})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigSocks5Connections">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_socks5_connections set
+		        <if test="connId != null and connId != ''">
+                	conn_id = #{connId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="uid != null and uid != ''">
+                	uid = #{uid,jdbcType=DECIMAL},
+		        </if>
+		        <if test="instance != null and instance != ''">
+                	instance = #{instance,jdbcType=VARCHAR},
+		        </if>
+		        <if test="direction != null and direction != ''">
+                	direction = #{direction,jdbcType=DECIMAL},
+		        </if>
+		        <if test="transferredBytes != null and transferredBytes != ''">
+                	transferred_bytes = #{transferredBytes,jdbcType=DECIMAL},
+		        </if>
+		        <if test="transferTimestamp != null and transferTimestamp != ''">
+                	transfer_timestamp = #{transferTimestamp,jdbcType=TIMESTAMP},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigSocks5ConnectionsById" resultMap="TigSocks5ConnectionsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigSocks5ConnectionsColumns"/> from tig_socks5_connections
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigSocks5ConnectionsList" resultMap="TigSocks5ConnectionsMap"
+            parameterType="com.letv.tigase.domain.query.TigSocks5ConnectionsQuery">
+        select <include refid="tigSocks5ConnectionsColumns"/> from tig_socks5_connections where <include refid="queryTigSocks5ConnectionsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigSocks5ConnectionsListWithPage" resultMap="TigSocks5ConnectionsMap"
+            parameterType="com.letv.tigase.domain.query.TigSocks5ConnectionsQuery">
+        select <include refid="tigSocks5ConnectionsColumns"/> from tig_socks5_connections where <include refid="queryTigSocks5ConnectionsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigSocks5Connections">
+        select count(1) from tig_socks5_connections where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigSocks5ConnectionsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigSocks5ConnectionsQuery">
+        select count(1) from tig_socks5_connections where <include refid="queryTigSocks5ConnectionsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigSocks5Connections">
+		update tig_socks5_connections 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigSocks5ConnectionsListWhere">
+    	yn = 1
+        <if test="connId != null and connId != ''">
+        	and conn_id = #{connId,jdbcType=DECIMAL}
+        </if>
+        <if test="uid != null and uid != ''">
+        	and uid = #{uid,jdbcType=DECIMAL}
+        </if>
+        <if test="instance != null and instance != ''">
+        	and instance = #{instance,jdbcType=VARCHAR}
+        </if>
+        <if test="direction != null and direction != ''">
+        	and direction = #{direction,jdbcType=DECIMAL}
+        </if>
+        <if test="transferredBytes != null and transferredBytes != ''">
+        	and transferred_bytes = #{transferredBytes,jdbcType=DECIMAL}
+        </if>
+        <if test="transferTimestamp != null and transferTimestamp != ''">
+        	and transfer_timestamp = #{transferTimestamp,jdbcType=TIMESTAMP}
+        </if>
+    </sql>
+</mapper>

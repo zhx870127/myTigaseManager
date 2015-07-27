@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigUsersDaoImpl">
+    <resultMap id="TigUsersMap" type="TigUsers">
+		<result column="uid" property="uid" jdbcType="DECIMAL" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="sha1_user_id" property="sha1UserId" jdbcType="VARCHAR" />
+		<result column="user_pw" property="userPw" jdbcType="VARCHAR" />
+		<result column="acc_create_time" property="accCreateTime" jdbcType="TIMESTAMP" />
+		<result column="last_login" property="lastLogin" jdbcType="TIMESTAMP" />
+		<result column="last_logout" property="lastLogout" jdbcType="TIMESTAMP" />
+		<result column="online_status" property="onlineStatus" jdbcType="DECIMAL" />
+		<result column="failed_logins" property="failedLogins" jdbcType="DECIMAL" />
+		<result column="account_status" property="accountStatus" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <sql id="tigUsersColumns">
+    	uid,user_id,sha1_user_id,user_pw,acc_create_time,last_login,last_logout,online_status,failed_logins,account_status
+    </sql>
+    
+     <sql id="tigUsersUsedColumns">
+    	user_id,sha1_user_id,user_pw,acc_create_time,last_login,last_logout,online_status,failed_logins,account_status
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigUsers" useGeneratedKeys="true" keyProperty="uid">
+        INSERT INTO tig_users(<include refid="tigUsersUsedColumns"/>) 
+        VALUES (#{userId},#{sha1UserId},#{userPw},#{accCreateTime},#{lastLogin},#{lastLogout},#{onlineStatus},#{failedLogins},#{accountStatus})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigUsers">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_users set
+		        <if test="uid != null and uid != ''">
+                	uid = #{uid,jdbcType=DECIMAL},
+		        </if>
+		        <if test="userId != null and userId != ''">
+                	user_id = #{userId,jdbcType=VARCHAR},
+		        </if>
+		        <if test="sha1UserId != null and sha1UserId != ''">
+                	sha1_user_id = #{sha1UserId,jdbcType=VARCHAR},
+		        </if>
+		        <if test="userPw != null and userPw != ''">
+                	user_pw = #{userPw,jdbcType=VARCHAR},
+		        </if>
+		        <if test="accCreateTime != null and accCreateTime != ''">
+                	acc_create_time = #{accCreateTime,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="lastLogin != null and lastLogin != ''">
+                	last_login = #{lastLogin,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="lastLogout != null and lastLogout != ''">
+                	last_logout = #{lastLogout,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="onlineStatus != null and onlineStatus != ''">
+                	online_status = #{onlineStatus,jdbcType=DECIMAL},
+		        </if>
+		        <if test="failedLogins != null and failedLogins != ''">
+                	failed_logins = #{failedLogins,jdbcType=DECIMAL},
+		        </if>
+		        <if test="accountStatus != null and accountStatus != ''">
+                	account_status = #{accountStatus,jdbcType=DECIMAL},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigUsersById" resultMap="TigUsersMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigUsersColumns"/> from tig_users
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigUsersList" resultMap="TigUsersMap"
+            parameterType="com.letv.tigase.domain.query.TigUsersQuery">
+        select <include refid="tigUsersColumns"/> from tig_users where <include refid="queryTigUsersListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigUsersListWithPage" resultMap="TigUsersMap"
+            parameterType="com.letv.tigase.domain.query.TigUsersQuery">
+        select <include refid="tigUsersColumns"/> from tig_users where <include refid="queryTigUsersListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigUsers">
+        select count(1) from tig_users where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigUsersCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigUsersQuery">
+        select count(1) from tig_users where <include refid="queryTigUsersListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigUsers">
+		update tig_users 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigUsersListWhere">
+    	yn = 1
+        <if test="uid != null and uid != ''">
+        	and uid = #{uid,jdbcType=DECIMAL}
+        </if>
+        <if test="userId != null and userId != ''">
+        	and user_id = #{userId,jdbcType=VARCHAR}
+        </if>
+        <if test="sha1UserId != null and sha1UserId != ''">
+        	and sha1_user_id = #{sha1UserId,jdbcType=VARCHAR}
+        </if>
+        <if test="userPw != null and userPw != ''">
+        	and user_pw = #{userPw,jdbcType=VARCHAR}
+        </if>
+        <if test="accCreateTime != null and accCreateTime != ''">
+        	and acc_create_time = #{accCreateTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="lastLogin != null and lastLogin != ''">
+        	and last_login = #{lastLogin,jdbcType=TIMESTAMP}
+        </if>
+        <if test="lastLogout != null and lastLogout != ''">
+        	and last_logout = #{lastLogout,jdbcType=TIMESTAMP}
+        </if>
+        <if test="onlineStatus != null and onlineStatus != ''">
+        	and online_status = #{onlineStatus,jdbcType=DECIMAL}
+        </if>
+        <if test="failedLogins != null and failedLogins != ''">
+        	and failed_logins = #{failedLogins,jdbcType=DECIMAL}
+        </if>
+        <if test="accountStatus != null and accountStatus != ''">
+        	and account_status = #{accountStatus,jdbcType=DECIMAL}
+        </if>
+    </sql>
+</mapper>

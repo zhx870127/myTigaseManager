@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<title>错误页面</title>
+		#parse("/layout/head.vm")
+	</head>
+	<body>
+		<div class="center">
+			<h2 class="alert alert-danger">
+				系统出错
+				<hr>
+				<div class="alert alert-warning">
+					抱歉，找不到您要的页面…… <br /><br /> <br />
+					错误代码：$!errorCode。 错误消息：$!errorMsg。
+				</div>
+			</h2>
+        </div>
+	</body>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.BroadcastMsgsDaoImpl">
+    <resultMap id="BroadcastMsgsMap" type="BroadcastMsgs">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="expired" property="expired" jdbcType="TIMESTAMP" />
+		<result column="msg" property="msg" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="broadcastMsgsColumns">
+    	id,expired,msg
+    </sql>
+    
+     <sql id="broadcastMsgsUsedColumns">
+    	expired,msg
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="BroadcastMsgs" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO broadcast_msgs(<include refid="broadcastMsgsUsedColumns"/>) 
+        VALUES (#{expired},#{msg})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="BroadcastMsgs">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update broadcast_msgs set
+		        <if test="expired != null and expired != ''">
+                	expired = #{expired,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="msg != null and msg != ''">
+                	msg = #{msg,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getBroadcastMsgsById" resultMap="BroadcastMsgsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="broadcastMsgsColumns"/> from broadcast_msgs
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryBroadcastMsgsList" resultMap="BroadcastMsgsMap"
+            parameterType="com.letv.tigase.domain.query.BroadcastMsgsQuery">
+        select <include refid="broadcastMsgsColumns"/> from broadcast_msgs where <include refid="queryBroadcastMsgsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryBroadcastMsgsListWithPage" resultMap="BroadcastMsgsMap"
+            parameterType="com.letv.tigase.domain.query.BroadcastMsgsQuery">
+        select <include refid="broadcastMsgsColumns"/> from broadcast_msgs where <include refid="queryBroadcastMsgsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="BroadcastMsgs">
+        select count(1) from broadcast_msgs where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryBroadcastMsgsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.BroadcastMsgsQuery">
+        select count(1) from broadcast_msgs where <include refid="queryBroadcastMsgsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="BroadcastMsgs">
+		update broadcast_msgs 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryBroadcastMsgsListWhere">
+    	yn = 1
+        <if test="id != null and id != ''">
+        	and id = #{id,jdbcType=VARCHAR}
+        </if>
+        <if test="expired != null and expired != ''">
+        	and expired = #{expired,jdbcType=TIMESTAMP}
+        </if>
+        <if test="msg != null and msg != ''">
+        	and msg = #{msg,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

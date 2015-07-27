@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigPubsubServiceJidsDaoImpl">
+    <resultMap id="TigPubsubServiceJidsMap" type="TigPubsubServiceJids">
+		<result column="service_id" property="serviceId" jdbcType="DECIMAL" />
+		<result column="service_jid" property="serviceJid" jdbcType="VARCHAR" />
+		<result column="service_jid_sha1" property="serviceJidSha1" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="tigPubsubServiceJidsColumns">
+    	service_id,service_jid,service_jid_sha1
+    </sql>
+    
+     <sql id="tigPubsubServiceJidsUsedColumns">
+    	service_jid,service_jid_sha1
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigPubsubServiceJids" useGeneratedKeys="true" keyProperty="service_id">
+        INSERT INTO tig_pubsub_service_jids(<include refid="tigPubsubServiceJidsUsedColumns"/>) 
+        VALUES (#{serviceJid},#{serviceJidSha1})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigPubsubServiceJids">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_pubsub_service_jids set
+		        <if test="serviceId != null and serviceId != ''">
+                	service_id = #{serviceId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="serviceJid != null and serviceJid != ''">
+                	service_jid = #{serviceJid,jdbcType=VARCHAR},
+		        </if>
+		        <if test="serviceJidSha1 != null and serviceJidSha1 != ''">
+                	service_jid_sha1 = #{serviceJidSha1,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigPubsubServiceJidsById" resultMap="TigPubsubServiceJidsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigPubsubServiceJidsColumns"/> from tig_pubsub_service_jids
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigPubsubServiceJidsList" resultMap="TigPubsubServiceJidsMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubServiceJidsQuery">
+        select <include refid="tigPubsubServiceJidsColumns"/> from tig_pubsub_service_jids where <include refid="queryTigPubsubServiceJidsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigPubsubServiceJidsListWithPage" resultMap="TigPubsubServiceJidsMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubServiceJidsQuery">
+        select <include refid="tigPubsubServiceJidsColumns"/> from tig_pubsub_service_jids where <include refid="queryTigPubsubServiceJidsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigPubsubServiceJids">
+        select count(1) from tig_pubsub_service_jids where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigPubsubServiceJidsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigPubsubServiceJidsQuery">
+        select count(1) from tig_pubsub_service_jids where <include refid="queryTigPubsubServiceJidsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigPubsubServiceJids">
+		update tig_pubsub_service_jids 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigPubsubServiceJidsListWhere">
+    	yn = 1
+        <if test="serviceId != null and serviceId != ''">
+        	and service_id = #{serviceId,jdbcType=DECIMAL}
+        </if>
+        <if test="serviceJid != null and serviceJid != ''">
+        	and service_jid = #{serviceJid,jdbcType=VARCHAR}
+        </if>
+        <if test="serviceJidSha1 != null and serviceJidSha1 != ''">
+        	and service_jid_sha1 = #{serviceJidSha1,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+		#parse("/layout/head.vm")
+        <script language="javascript">
+            $(function() {
+				$('#addForm').validate({
+					errorElement:"em",
+					errorClass:"red",
+					rules: {
+												nodeId: {required: true},
+						serviceId: {required: true},
+						name: {required: true},
+						nameSha1: {required: true},
+						type: {required: true},
+						title: {required: true},
+						description: {required: true},
+						creatorId: {required: true},
+						creationDate: {required: true},
+						configuration: {required: true},
+						collectionId: {required: true}
+					},
+			
+					messages: {
+						nodeId: { required: "请输入"},
+						serviceId: { required: "请输入"},
+						name: { required: "请输入"},
+						nameSha1: { required: "请输入"},
+						type: { required: "请输入"},
+						title: { required: "请输入"},
+						description: { required: "请输入"},
+						creatorId: { required: "请输入"},
+						creationDate: { required: "请输入"},
+						configuration: { required: "请输入"},
+						collectionId: { required: "请输入"}
+					}
+				});
+				
+				$("#btn-back").click(function(){
+					window.location.href=("$basePath/tigPubsubNodes");
+				});
+				$("#btn-submit").click(function(){
+            		var form = $("#addForm");
+					if(form.valid()==false){
+						return;
+					}
+					jQuery.post('$basePath/tigPubsubNodes/add',
+            			form.serialize(),
+            			function(data) { MyPopWindow.SubmitCompletedCallback2(data, "$basePath/tigPubsubNodes"); }
+            		);
+            	});
+            });
+        </script>
+    </head>
+	<body>
+		<div class="row">
+            <div class="col-xs-12 col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-header">
+                        <h5 class="lighter">
+                            <i class="icon-plus green"></i>&nbsp;&gt;&nbsp;新增
+                        </h5>
+                        <div class="widget-toolbar"></div>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main" style="background-color: #fff;padding:5px;">
+                            <form class="form-horizontal" role="form" id="addForm">
+                                <div class="form-group">
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="nodeId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="nodeId" id="nodeId" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="serviceId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="serviceId" id="serviceId" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="name"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="name" id="name" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="nameSha1"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="nameSha1" id="nameSha1" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="type"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="type" id="type" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="title"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="title" id="title" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="description"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="description" id="description" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="creatorId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="creatorId" id="creatorId" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="creationDate"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="creationDate" id="creationDate" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="configuration"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="configuration" id="configuration" class="col-xs-12 col-sm-12" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="collectionId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="collectionId" id="collectionId" class="col-xs-12 col-sm-12" />
+                                    </div>
+                                </div>
+								<div class="form-group">
+									<div class="col-sm-8 col-sm-offset-4">
+                                        <button class="btn btn-info btn-sm" type="button" id="btn-back"><i class="icon-arrow-left"></i>返回</button>
+                                        &nbsp; &nbsp; &nbsp;
+                                        <button class="btn btn-sm" type="reset" id="btn-reset"><i class="icon-undo"></i>重置</button>
+										 &nbsp; &nbsp; &nbsp;
+              							<button class="btn btn-success btn-sm" type="button" id="btn-submit"><i class="icon-ok"></i>提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+	</body>
+</html>

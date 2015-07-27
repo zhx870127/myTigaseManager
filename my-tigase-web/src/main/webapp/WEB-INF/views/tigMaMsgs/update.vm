@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+		#parse("/layout/head.vm")
+        <script language="javascript">
+            $(function() {
+				$('#updateForm').validate({
+					errorElement:"em",
+					errorClass:"red",
+					rules: {
+												msgId: {required: true},
+						ownerId: {required: true},
+						buddyId: {required: true},
+						ts: {required: true},
+						direction: {required: true},
+						type: {required: true},
+						body: {required: true},
+						msg: {required: true}
+					},
+			
+					messages: {
+						msgId: { required: "请输入"},
+						ownerId: { required: "请输入"},
+						buddyId: { required: "请输入"},
+						ts: { required: "请输入"},
+						direction: { required: "请输入"},
+						type: { required: "请输入"},
+						body: { required: "请输入"},
+						msg: { required: "请输入"}
+					}
+				});
+				
+				$("#btn-back").click(function(){
+					window.location.href=("$basePath/tigMaMsgs");
+				});
+				$("#btn-submit").click(function(){
+            		var form = $("#updateForm");
+					if(form.valid()==false){
+						return;
+					}
+					jQuery.post('$basePath/tigMaMsgs/update',
+            			form.serialize(),
+            			function(data) { MyPopWindow.SubmitCompletedCallback2(data, "$basePath/tigMaMsgs"); }
+            		);
+            	});
+            });
+        </script>
+    </head>
+	<body>
+		<div class="row">
+            <div class="col-xs-12 col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-header">
+                        <h5 class="lighter">
+                            <i class="icon-plus green"></i>&nbsp;&gt;&nbsp;修改
+                        </h5>
+                        <div class="widget-toolbar"></div>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main" style="background-color: #fff;padding:5px;">
+                            <form class="form-horizontal" role="form" id="updateForm">
+                                <div class="form-group">
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="msgId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="msgId" id="msgId" class="col-xs-12 col-sm-12" value="$!tigMaMsgs.msgId" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="ownerId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="ownerId" id="ownerId" class="col-xs-12 col-sm-12" value="$!tigMaMsgs.ownerId" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="buddyId"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="buddyId" id="buddyId" class="col-xs-12 col-sm-12" value="$!tigMaMsgs.buddyId" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="ts"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="ts" id="ts" class="col-xs-12 col-sm-12" value="$!tigMaMsgs.ts" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="direction"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="direction" id="direction" class="col-xs-12 col-sm-12" value="$!tigMaMsgs.direction" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="type"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="type" id="type" class="col-xs-12 col-sm-12" value="$!tigMaMsgs.type" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="body"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="body" id="body" class="col-xs-12 col-sm-12" value="$!tigMaMsgs.body" />
+                                    </div>
+									<label class="col-sm-offset-1 col-sm-1 control-label no-padding-right" for="msg"></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" name="msg" id="msg" class="col-xs-12 col-sm-12" value="$!tigMaMsgs.msg" />
+                                    </div>
+                                </div>
+								<div class="form-group">
+									<input type="hidden" name="id" id="id" value="$!tigMaMsgs.id" />
+									<div class="col-sm-8 col-sm-offset-4">
+                                        <button class="btn btn-info btn-sm" type="button" id="btn-back"><i class="icon-arrow-left"></i>返回</button>
+                                        &nbsp; &nbsp; &nbsp;
+                                        <button class="btn btn-sm" type="reset" id="btn-reset"><i class="icon-undo"></i>重置</button>
+										 &nbsp; &nbsp; &nbsp;
+              							<button class="btn btn-success btn-sm" type="button" id="btn-submit"><i class="icon-ok"></i>提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+	</body>
+</html>

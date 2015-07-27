@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
+	default-autowire="byName">
+
+	<!-- parentAbstractTask 定义公共属性 -->
+	<bean id="parentAbstractTask" abstract="true"
+		class="com.letv.schedule.execute.ScheduleTaskExecutor" depends-on="tbScheduleManagerFactory"
+		p:taskMap-ref="taskMap" p:managerFactory-ref="tbScheduleManagerFactory" p:ownSign="${worker.ownSign}" />
+	
+	<!-- 简单的测试任务 -->
+	<bean id="testTask" parent="parentAbstractTask" p:taskType="testTask" 
+		p:taskDataSource-ref="taskDataSource" p:taskTable="task_test" p:businessService-ref="testTaskService" 
+		p:desc="测试任务" p:subTaskType="10" />
+
+	<util:map id="taskMap">
+		<entry key="TASK_ID" value="taskId" />
+		<entry key="CREATE_TIME" value="createTime" />
+		<entry key="UPDATE_TIME" value="updateTime" />
+		<entry key="KEYWORD1" value="keyword1" />
+		<entry key="KEYWORD2" value="keyword2" />
+		<entry key="BODY" value="body" />
+		<entry key="EXECUTE_COUNT" value="executeCount" />
+		<entry key="TASK_TYPE" value="taskType" />
+		<entry key="TASK_STATUS" value="taskStatus" />
+		<entry key="YN" value="yn" />
+		<entry key="OWN_SIGN" value="ownSign" />
+		<entry key="QUEUE_ID" value="queueId" />
+	</util:map>
+
+</beans>

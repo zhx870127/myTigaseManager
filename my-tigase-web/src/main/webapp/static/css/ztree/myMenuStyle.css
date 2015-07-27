@@ -1,0 +1,60 @@
+.treeMenu {
+	position:absolute;
+	visibility:hidden; 
+	top:0; 
+	background-color: #fff;
+	text-align: left;
+	padding-top: 2px;
+}
+
+.treeMenu ul li{
+   	margin-bottom: 5px;
+   	padding-left: 15px;
+   	padding-right: 15px;
+   	cursor: pointer;
+   	list-style: none outside none;
+   	background-color: #DFDFDF;
+   	font-size: 14px;
+}
+.zTreeDemoBackground {
+   	width:200px;
+    height:240px;
+   	text-align:left;
+}
+.zTreeDemoBackgroundRight {
+       width:440px;
+       height:110px;
+   	text-align:left;
+}
+
+ul.ztree {
+    margin-top: 2px;
+    border: 1px solid #617775;
+    background: #f0f6e0;
+    width:240px;
+    height:240px;
+    overflow-y:scroll;
+    overflow-x:auto;
+}
+
+ul.ztreeRight {
+    margin-top: 2px;
+    border: 1px solid #617775;
+    background: #fff;
+    width:440px;
+    height:110px;
+    overflow-y:scroll;
+    overflow-x:auto;
+}
+.tree-list{
+}
+.tree-list-left{
+	width:242px;
+	float: left;
+	position: relative;
+}
+.tree-list-right{
+	padding-left:15px;
+	zoom: 1;
+	overflow: hidden;
+}

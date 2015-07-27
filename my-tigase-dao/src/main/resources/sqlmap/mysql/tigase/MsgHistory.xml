@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.MsgHistoryDaoImpl">
+    <resultMap id="MsgHistoryMap" type="MsgHistory">
+		<result column="msg_id" property="msgId" jdbcType="DECIMAL" />
+		<result column="ts" property="ts" jdbcType="TIMESTAMP" />
+		<result column="expired" property="expired" jdbcType="TIMESTAMP" />
+		<result column="sender_uid" property="senderUid" jdbcType="DECIMAL" />
+		<result column="receiver_uid" property="receiverUid" jdbcType="DECIMAL" />
+		<result column="msg_type" property="msgType" jdbcType="DECIMAL" />
+		<result column="message" property="message" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="msgHistoryColumns">
+    	msg_id,ts,expired,sender_uid,receiver_uid,msg_type,message
+    </sql>
+    
+     <sql id="msgHistoryUsedColumns">
+    	ts,expired,sender_uid,receiver_uid,msg_type,message
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="MsgHistory" useGeneratedKeys="true" keyProperty="msg_id">
+        INSERT INTO msg_history(<include refid="msgHistoryUsedColumns"/>) 
+        VALUES (#{ts},#{expired},#{senderUid},#{receiverUid},#{msgType},#{message})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="MsgHistory">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update msg_history set
+		        <if test="msgId != null and msgId != ''">
+                	msg_id = #{msgId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="ts != null and ts != ''">
+                	ts = #{ts,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="expired != null and expired != ''">
+                	expired = #{expired,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="senderUid != null and senderUid != ''">
+                	sender_uid = #{senderUid,jdbcType=DECIMAL},
+		        </if>
+		        <if test="receiverUid != null and receiverUid != ''">
+                	receiver_uid = #{receiverUid,jdbcType=DECIMAL},
+		        </if>
+		        <if test="msgType != null and msgType != ''">
+                	msg_type = #{msgType,jdbcType=DECIMAL},
+		        </if>
+		        <if test="message != null and message != ''">
+                	message = #{message,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getMsgHistoryById" resultMap="MsgHistoryMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="msgHistoryColumns"/> from msg_history
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryMsgHistoryList" resultMap="MsgHistoryMap"
+            parameterType="com.letv.tigase.domain.query.MsgHistoryQuery">
+        select <include refid="msgHistoryColumns"/> from msg_history where <include refid="queryMsgHistoryListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryMsgHistoryListWithPage" resultMap="MsgHistoryMap"
+            parameterType="com.letv.tigase.domain.query.MsgHistoryQuery">
+        select <include refid="msgHistoryColumns"/> from msg_history where <include refid="queryMsgHistoryListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="MsgHistory">
+        select count(1) from msg_history where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryMsgHistoryCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.MsgHistoryQuery">
+        select count(1) from msg_history where <include refid="queryMsgHistoryListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="MsgHistory">
+		update msg_history 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryMsgHistoryListWhere">
+    	yn = 1
+        <if test="msgId != null and msgId != ''">
+        	and msg_id = #{msgId,jdbcType=DECIMAL}
+        </if>
+        <if test="ts != null and ts != ''">
+        	and ts = #{ts,jdbcType=TIMESTAMP}
+        </if>
+        <if test="expired != null and expired != ''">
+        	and expired = #{expired,jdbcType=TIMESTAMP}
+        </if>
+        <if test="senderUid != null and senderUid != ''">
+        	and sender_uid = #{senderUid,jdbcType=DECIMAL}
+        </if>
+        <if test="receiverUid != null and receiverUid != ''">
+        	and receiver_uid = #{receiverUid,jdbcType=DECIMAL}
+        </if>
+        <if test="msgType != null and msgType != ''">
+        	and msg_type = #{msgType,jdbcType=DECIMAL}
+        </if>
+        <if test="message != null and message != ''">
+        	and message = #{message,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

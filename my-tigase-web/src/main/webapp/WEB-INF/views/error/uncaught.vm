@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<title>错误页面</title>
+		#parse("/layout/head.vm")
+	</head>
+	<body>
+		<div class="center">
+			<h2 class="alert alert-danger">
+				系统出错,未知异常。
+			</h2>
+        </div>
+	</body>
+</html>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.ClusterNodesDaoImpl">
+    <resultMap id="ClusterNodesMap" type="ClusterNodes">
+		<result column="hostname" property="hostname" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+		<result column="port" property="port" jdbcType="DECIMAL" />
+		<result column="cpu_usage" property="cpuUsage" jdbcType="VARCHAR" />
+		<result column="mem_usage" property="memUsage" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="clusterNodesColumns">
+    	hostname,password,last_update,port,cpu_usage,mem_usage
+    </sql>
+    
+     <sql id="clusterNodesUsedColumns">
+    	password,last_update,port,cpu_usage,mem_usage
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="ClusterNodes" useGeneratedKeys="true" keyProperty="hostname">
+        INSERT INTO cluster_nodes(<include refid="clusterNodesUsedColumns"/>) 
+        VALUES (#{password},#{lastUpdate},#{port},#{cpuUsage},#{memUsage})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="ClusterNodes">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update cluster_nodes set
+		        <if test="hostname != null and hostname != ''">
+                	hostname = #{hostname,jdbcType=VARCHAR},
+		        </if>
+		        <if test="password != null and password != ''">
+                	password = #{password,jdbcType=VARCHAR},
+		        </if>
+		        <if test="lastUpdate != null and lastUpdate != ''">
+                	last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="port != null and port != ''">
+                	port = #{port,jdbcType=DECIMAL},
+		        </if>
+		        <if test="cpuUsage != null and cpuUsage != ''">
+                	cpu_usage = #{cpuUsage,jdbcType=VARCHAR},
+		        </if>
+		        <if test="memUsage != null and memUsage != ''">
+                	mem_usage = #{memUsage,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getClusterNodesById" resultMap="ClusterNodesMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="clusterNodesColumns"/> from cluster_nodes
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryClusterNodesList" resultMap="ClusterNodesMap"
+            parameterType="com.letv.tigase.domain.query.ClusterNodesQuery">
+        select <include refid="clusterNodesColumns"/> from cluster_nodes where <include refid="queryClusterNodesListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryClusterNodesListWithPage" resultMap="ClusterNodesMap"
+            parameterType="com.letv.tigase.domain.query.ClusterNodesQuery">
+        select <include refid="clusterNodesColumns"/> from cluster_nodes where <include refid="queryClusterNodesListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="ClusterNodes">
+        select count(1) from cluster_nodes where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryClusterNodesCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.ClusterNodesQuery">
+        select count(1) from cluster_nodes where <include refid="queryClusterNodesListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="ClusterNodes">
+		update cluster_nodes 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryClusterNodesListWhere">
+    	yn = 1
+        <if test="hostname != null and hostname != ''">
+        	and hostname = #{hostname,jdbcType=VARCHAR}
+        </if>
+        <if test="password != null and password != ''">
+        	and password = #{password,jdbcType=VARCHAR}
+        </if>
+        <if test="lastUpdate != null and lastUpdate != ''">
+        	and last_update = #{lastUpdate,jdbcType=TIMESTAMP}
+        </if>
+        <if test="port != null and port != ''">
+        	and port = #{port,jdbcType=DECIMAL}
+        </if>
+        <if test="cpuUsage != null and cpuUsage != ''">
+        	and cpu_usage = #{cpuUsage,jdbcType=VARCHAR}
+        </if>
+        <if test="memUsage != null and memUsage != ''">
+        	and mem_usage = #{memUsage,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

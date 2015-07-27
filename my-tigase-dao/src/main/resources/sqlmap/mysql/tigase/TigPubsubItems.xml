@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.TigPubsubItemsDaoImpl">
+    <resultMap id="TigPubsubItemsMap" type="TigPubsubItems">
+		<result column="node_id" property="nodeId" jdbcType="DECIMAL" />
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="id_sha1" property="idSha1" jdbcType="VARCHAR" />
+		<result column="creation_date" property="creationDate" jdbcType="TIMESTAMP" />
+		<result column="publisher_id" property="publisherId" jdbcType="DECIMAL" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="data" property="data" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="tigPubsubItemsColumns">
+    	node_id,id,id_sha1,creation_date,publisher_id,update_date,data
+    </sql>
+    
+     <sql id="tigPubsubItemsUsedColumns">
+    	node_id,id,creation_date,publisher_id,update_date,data
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="TigPubsubItems" useGeneratedKeys="true" keyProperty="id_sha1">
+        INSERT INTO tig_pubsub_items(<include refid="tigPubsubItemsUsedColumns"/>) 
+        VALUES (#{nodeId},#{id},#{creationDate},#{publisherId},#{updateDate},#{data})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="TigPubsubItems">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update tig_pubsub_items set
+		        <if test="nodeId != null and nodeId != ''">
+                	node_id = #{nodeId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="idSha1 != null and idSha1 != ''">
+                	id_sha1 = #{idSha1,jdbcType=VARCHAR},
+		        </if>
+		        <if test="creationDate != null and creationDate != ''">
+                	creation_date = #{creationDate,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="publisherId != null and publisherId != ''">
+                	publisher_id = #{publisherId,jdbcType=DECIMAL},
+		        </if>
+		        <if test="updateDate != null and updateDate != ''">
+                	update_date = #{updateDate,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="data != null and data != ''">
+                	data = #{data,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getTigPubsubItemsById" resultMap="TigPubsubItemsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="tigPubsubItemsColumns"/> from tig_pubsub_items
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryTigPubsubItemsList" resultMap="TigPubsubItemsMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubItemsQuery">
+        select <include refid="tigPubsubItemsColumns"/> from tig_pubsub_items where <include refid="queryTigPubsubItemsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryTigPubsubItemsListWithPage" resultMap="TigPubsubItemsMap"
+            parameterType="com.letv.tigase.domain.query.TigPubsubItemsQuery">
+        select <include refid="tigPubsubItemsColumns"/> from tig_pubsub_items where <include refid="queryTigPubsubItemsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="TigPubsubItems">
+        select count(1) from tig_pubsub_items where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryTigPubsubItemsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.TigPubsubItemsQuery">
+        select count(1) from tig_pubsub_items where <include refid="queryTigPubsubItemsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="TigPubsubItems">
+		update tig_pubsub_items 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryTigPubsubItemsListWhere">
+    	yn = 1
+        <if test="nodeId != null and nodeId != ''">
+        	and node_id = #{nodeId,jdbcType=DECIMAL}
+        </if>
+        <if test="id != null and id != ''">
+        	and id = #{id,jdbcType=VARCHAR}
+        </if>
+        <if test="idSha1 != null and idSha1 != ''">
+        	and id_sha1 = #{idSha1,jdbcType=VARCHAR}
+        </if>
+        <if test="creationDate != null and creationDate != ''">
+        	and creation_date = #{creationDate,jdbcType=TIMESTAMP}
+        </if>
+        <if test="publisherId != null and publisherId != ''">
+        	and publisher_id = #{publisherId,jdbcType=DECIMAL}
+        </if>
+        <if test="updateDate != null and updateDate != ''">
+        	and update_date = #{updateDate,jdbcType=TIMESTAMP}
+        </if>
+        <if test="data != null and data != ''">
+        	and data = #{data,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

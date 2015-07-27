@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd" default-autowire="byName">
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${dataSource.db.jdbc.driver}"/>
+		<property name="url" value="${dataSource.db.jdbc.url}"/>
+		<property name="username" value="${dataSource.db.jdbc.username}"/>
+		<property name="password" value="${dataSource.db.jdbc.password}"/>
+		<property name="initialSize" value="2" />
+		<property name="maxActive" value="5" />
+		<property name="minIdle" value="2" />
+		<property name="maxIdle" value="4" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="minEvictableIdleTimeMillis" value="180000" />
+		<property name="testOnBorrow" value="true" />
+		<property name="validationQuery" value="select now()" />
+		<property name="removeAbandonedTimeout" value="300" />
+		<property name="removeAbandoned" value="true" />
+	</bean>
+	
+	<bean id="TBscheduleDataSource" class="org.apache.commons.dbcp.BasicDataSource" >
+		<property name="driverClassName" value="${mysql.db.driverClassName}" />
+		<property name="defaultAutoCommit" value="true" />
+	    <property name="url" value="${schedule.db.url}"/>
+	    <property name="username" value="${schedule.db.username}" />
+		<property name="password" value="${schedule.db.password}" />
+		<property name="initialSize" value="${schedule.db.initialSize}" />
+		<property name="maxActive" value="${schedule.db.maxActive}" />
+	    <property name="maxIdle" value="${schedule.db.maxIdle}" />
+		<property name="maxWait" value="${schedule.db.maxWait}" />
+		<property name="minIdle" value="${schedule.db.minIdle}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${schedule.db.timeBetweenEvictionRunsMillis}" />
+		<property name="numTestsPerEvictionRun" value="${schedule.db.numTestsPerEvictionRun}" />
+		<property name="minEvictableIdleTimeMillis" value="${schedule.db.minEvictableIdleTimeMillis}" />
+	</bean>
+	 
+</beans>

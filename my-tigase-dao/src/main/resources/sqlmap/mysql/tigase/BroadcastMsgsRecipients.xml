@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.BroadcastMsgsRecipientsDaoImpl">
+    <resultMap id="BroadcastMsgsRecipientsMap" type="BroadcastMsgsRecipients">
+		<result column="msg_id" property="msgId" jdbcType="VARCHAR" />
+		<result column="jid_id" property="jidId" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <sql id="broadcastMsgsRecipientsColumns">
+    	msg_id,jid_id
+    </sql>
+    
+     <sql id="broadcastMsgsRecipientsUsedColumns">
+    	msg_id,
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="BroadcastMsgsRecipients" useGeneratedKeys="true" keyProperty="jid_id">
+        INSERT INTO broadcast_msgs_recipients(<include refid="broadcastMsgsRecipientsUsedColumns"/>) 
+        VALUES (#{msgId},)
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="BroadcastMsgsRecipients">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update broadcast_msgs_recipients set
+		        <if test="msgId != null and msgId != ''">
+                	msg_id = #{msgId,jdbcType=VARCHAR},
+		        </if>
+		        <if test="jidId != null and jidId != ''">
+                	jid_id = #{jidId,jdbcType=DECIMAL},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getBroadcastMsgsRecipientsById" resultMap="BroadcastMsgsRecipientsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="broadcastMsgsRecipientsColumns"/> from broadcast_msgs_recipients
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryBroadcastMsgsRecipientsList" resultMap="BroadcastMsgsRecipientsMap"
+            parameterType="com.letv.tigase.domain.query.BroadcastMsgsRecipientsQuery">
+        select <include refid="broadcastMsgsRecipientsColumns"/> from broadcast_msgs_recipients where <include refid="queryBroadcastMsgsRecipientsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryBroadcastMsgsRecipientsListWithPage" resultMap="BroadcastMsgsRecipientsMap"
+            parameterType="com.letv.tigase.domain.query.BroadcastMsgsRecipientsQuery">
+        select <include refid="broadcastMsgsRecipientsColumns"/> from broadcast_msgs_recipients where <include refid="queryBroadcastMsgsRecipientsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="BroadcastMsgsRecipients">
+        select count(1) from broadcast_msgs_recipients where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryBroadcastMsgsRecipientsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.BroadcastMsgsRecipientsQuery">
+        select count(1) from broadcast_msgs_recipients where <include refid="queryBroadcastMsgsRecipientsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="BroadcastMsgsRecipients">
+		update broadcast_msgs_recipients 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryBroadcastMsgsRecipientsListWhere">
+    	yn = 1
+        <if test="msgId != null and msgId != ''">
+        	and msg_id = #{msgId,jdbcType=VARCHAR}
+        </if>
+        <if test="jidId != null and jidId != ''">
+        	and jid_id = #{jidId,jdbcType=DECIMAL}
+        </if>
+    </sql>
+</mapper>

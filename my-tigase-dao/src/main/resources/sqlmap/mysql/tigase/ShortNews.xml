@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.letv.tigase.dao.impl.ShortNewsDaoImpl">
+    <resultMap id="ShortNewsMap" type="ShortNews">
+		<result column="snid" property="snid" jdbcType="DECIMAL" />
+		<result column="publishing_time" property="publishingTime" jdbcType="TIMESTAMP" />
+		<result column="news_type" property="newsType" jdbcType="VARCHAR" />
+		<result column="author" property="author" jdbcType="VARCHAR" />
+		<result column="subject" property="subject" jdbcType="VARCHAR" />
+		<result column="body" property="body" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="shortNewsColumns">
+    	snid,publishing_time,news_type,author,subject,body
+    </sql>
+    
+     <sql id="shortNewsUsedColumns">
+    	publishing_time,news_type,author,subject,body
+    </sql>
+
+    <!-- 创建信息 -->
+    <insert id="insert" parameterType="ShortNews" useGeneratedKeys="true" keyProperty="snid">
+        INSERT INTO short_news(<include refid="shortNewsUsedColumns"/>) 
+        VALUES (#{publishingTime},#{newsType},#{author},#{subject},#{body})
+	</insert>
+	
+    <!-- 修改信息 -->
+    <update id="update" parameterType="ShortNews">
+        <if test="_parameter != null">
+            <if test="id != null and id > 0">
+                update short_news set
+		        <if test="snid != null and snid != ''">
+                	snid = #{snid,jdbcType=DECIMAL},
+		        </if>
+		        <if test="publishingTime != null and publishingTime != ''">
+                	publishing_time = #{publishingTime,jdbcType=TIMESTAMP},
+		        </if>
+		        <if test="newsType != null and newsType != ''">
+                	news_type = #{newsType,jdbcType=VARCHAR},
+		        </if>
+		        <if test="author != null and author != ''">
+                	author = #{author,jdbcType=VARCHAR},
+		        </if>
+		        <if test="subject != null and subject != ''">
+                	subject = #{subject,jdbcType=VARCHAR},
+		        </if>
+		        <if test="body != null and body != ''">
+                	body = #{body,jdbcType=VARCHAR},
+		        </if>
+                	update_time = now()
+                where id = #{id}
+            </if>
+        </if>
+    </update>
+
+    <!-- 根据主键获取对象信息 -->
+    <select id="getShortNewsById" resultMap="ShortNewsMap" parameterType="java.lang.Long">
+        <if test="_parameter != null">
+            select <include refid="shortNewsColumns"/> from short_news
+            where id = #{_parameter} and yn = 1
+        </if>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，不带翻页 -->
+    <select id="queryShortNewsList" resultMap="ShortNewsMap"
+            parameterType="com.letv.tigase.domain.query.ShortNewsQuery">
+        select <include refid="shortNewsColumns"/> from short_news where <include refid="queryShortNewsListWhere"/>
+    </select>
+
+    <!-- 根据查询Bean获取数据集合，翻页 -->
+    <select id="queryShortNewsListWithPage" resultMap="ShortNewsMap"
+            parameterType="com.letv.tigase.domain.query.ShortNewsQuery">
+        select <include refid="shortNewsColumns"/> from short_news where <include refid="queryShortNewsListWhere"/>
+        order by create_time desc 
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!-- 根据查询Bean查询-判断是否存在 -->
+    <select id="exist" resultType="java.lang.Integer" parameterType="ShortNews">
+        select count(1) from short_news where yn = 1 and group_name = #{groupName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据查询Bean获取集合总数 -->
+    <select id="queryShortNewsCount" resultType="java.lang.Integer"
+            parameterType="com.letv.tigase.domain.query.ShortNewsQuery">
+        select count(1) from short_news where <include refid="queryShortNewsListWhere"/>
+    </select>
+
+    <!-- 删除信息-逻辑删除 -->
+    <update id="delete" parameterType="ShortNews">
+		update short_news 
+		set yn = 0, update_time = now(), update_user = #{updateUser,jdbcType=VARCHAR}
+		where id = #{id}
+    </update>
+
+    <!-- 常用的查询Where条件 -->
+    <sql id="queryShortNewsListWhere">
+    	yn = 1
+        <if test="snid != null and snid != ''">
+        	and snid = #{snid,jdbcType=DECIMAL}
+        </if>
+        <if test="publishingTime != null and publishingTime != ''">
+        	and publishing_time = #{publishingTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="newsType != null and newsType != ''">
+        	and news_type = #{newsType,jdbcType=VARCHAR}
+        </if>
+        <if test="author != null and author != ''">
+        	and author = #{author,jdbcType=VARCHAR}
+        </if>
+        <if test="subject != null and subject != ''">
+        	and subject = #{subject,jdbcType=VARCHAR}
+        </if>
+        <if test="body != null and body != ''">
+        	and body = #{body,jdbcType=VARCHAR}
+        </if>
+    </sql>
+</mapper>

@@ -1,0 +1,67 @@
+#macro(pageBarPost $totalRow  $curPage $totalPage)
+    ##pageCount
+	#if($totalPage > 3)
+    	#set($start = $curPage - 1)
+		#if($start < 1)
+    		#set($start = 1)
+    	#end
+    	#set($end = $start + 5)
+    	#if($end > $totalPage)
+    		#set($end = $totalPage)
+    		#set($start = $end - 5)
+		#end
+		#if($start < 1)
+    		#set($start = 1)
+    	#end
+	#else
+		#set($start = 1)
+		#set($end = $totalPage)
+	#end	
+	#set($_prePage = $start - 1)
+	#set($_nextPage = $end + 1)
+	#set($prePage = $curPage - 1)
+	#set($nextPage = $curPage + 1)
+    <div class="row">
+        ##页码显示规则
+        #if($totalRow>0)
+            <div class="col-sm-offset-2 col-sm-2">
+                <div class="dataTables_info">共$!{totalRow}条记录 共$!{totalPage}页</div>
+            </div>
+            <div class="col-sm-6">
+                <div class="dataTables_paginate paging_bootstrap">
+                    <ul class="pagination">
+                        #if($curPage>1)		
+                            <li class="prev" onclick="pageSubmit(1)"><a href="#">首页</a></li>
+                            <li class="prev" onclick="pageSubmit(${prePage})"><a href="#">上一页</a></li>
+                        #else		
+                            <li class="prev disabled"><a href="#">首页</a></li>
+                            <li class="prev disabled"><a href="#">上一页</a></li>
+                        #end
+                        #if($_prePage>0)
+                            <li><a href="#">...</a></li>	
+                        #end	
+                        #foreach($idx in [$start..$end])
+                            #if($idx==$curPage)
+                                <li class="active"><a href="#">$idx</a></li>
+                            #else
+                                <li><a href="#" onclick="pageSubmit(${idx})">$idx</a></li>
+                            #end	
+                        #end	
+                        #if($_nextPage<=$totalPage )
+                            <li><a href="#">...</a></li>	
+                        #end	
+                        #if($curPage<$totalPage)
+                            <li class="next"><a href="#" onclick="pageSubmit(${nextPage})">下一页</a></li>
+                            <li class="next"><a href="#" onclick="pageSubmit(${totalPage})">末页</a></li>
+                        #else
+                            <li class="next disabled"><a href="#">下一页</a></li>
+                            <li class="next disabled"><a href="#">末页</a></li>
+                        #end
+                    </ul>
+                </div>
+            </div>
+        #else
+            <div class="col-sm-12"><span class="red">没有相关记录</span></div>
+        #end
+    </div>
+#end
